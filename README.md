@@ -1,73 +1,60 @@
-# React + TypeScript + Vite
+# Text Humanizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Paste AI-generated or stiff-sounding text, get back natural, human-sounding output — split into copyable chunks.
 
-Currently, two official plugins are available:
+Supports **Anthropic** (Claude) and **Google** (Gemini) models, with output in 12 languages.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Quick start
 
-## React Compiler
+**1. Clone and install**
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone <repo-url>
+cd text-humanizer
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**2. Add API keys**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Create a `.env` file in the root:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+ANTHROPIC_API_KEY=your_key_here
+GEMINI_API_KEY=your_key_here
+```
+
+You only need the key(s) for the provider(s) you want to use.
+
+- Anthropic keys: https://console.anthropic.com
+- Gemini keys: https://aistudio.google.com/apikey
+
+**3. Run**
+
+```bash
+npm run dev
+```
+
+Open http://localhost:5173 in your browser.
+
+## Usage
+
+1. Paste your text into the input box
+2. Select an AI model from the dropdown
+3. Optionally select an output language (top right)
+4. Click **Humanize**
+5. Copy the output chunks individually
+
+## Models available
+
+| Provider | Models |
+|----------|--------|
+| Anthropic | Claude 3.7 Sonnet, Claude 3.5 Sonnet, Claude 3.5 Haiku |
+| Google | Gemini 2.5 Flash, Gemini 2.5 Pro, Gemini 2.0 Flash (Exp) |
+
+## Build for production
+
+```bash
+npm run build
+```
+
+Output goes to `dist/`. The Express server serves the built frontend in production.
