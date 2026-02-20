@@ -15,7 +15,7 @@ Remove these patterns:
 - Copula avoidance: replace "serves as", "stands as", "boasts" with "is/are/has"
 - Negative parallelisms: "It's not just X; it's Y"
 - Rule of three overuse
-- Em dash and en dash overuse — сведи использование тире к абсолютному минимуму; вместо тире используй средства языка оригинала: запятые, "то есть", "а следовательно", "значит", "иными словами", "то", "а именно", "при этом", союзы и другие естественные обороты; тире допустимо только там, где оно грамматически обязательно (например, в именных сказуемых без связки)
+- Em dash and en dash overuse — reduce the use of dashes to an absolute minimum; instead of dashes, use natural language structures: commas, "that is", "therefore", "meaning", "in other words", "then", "namely", "however", conjunctions, and other natural phrasing; dashes are permitted only where grammatically required (for example, in nominal predicates without a linking verb)
 - Boldface overuse
 - Chatbot artifacts: "I hope this helps!", "Let me know if...", "Great question!"
 - Sycophantic tone
