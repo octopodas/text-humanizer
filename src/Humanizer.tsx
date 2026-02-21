@@ -1,5 +1,6 @@
 import { useState } from "react";
-import SYSTEM_PROMPT from "./system-prompt.md?raw";
+import STYLE_PROMPT from "./system-prompt.md?raw";
+import THREADS_PROMPT from "./prompts/threads.md?raw";
 import {
   Select,
   SelectContent,
@@ -11,8 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const PLATFORM_PROMPTS: Record<string, string> = {
+  threads: THREADS_PROMPT,
+};
+
 export default function Humanizer() {
   const [input, setInput] = useState("");
+  const [platform, setPlatform] = useState("threads");
   const [provider, setProvider] = useState("gemini");
   const [model, setModel] = useState("gemini-2.5-flash");
   const [language, setLanguage] = useState("English");
@@ -39,7 +45,7 @@ export default function Humanizer() {
         },
         body: JSON.stringify({
           input,
-          systemPrompt: SYSTEM_PROMPT,
+          systemPrompt: STYLE_PROMPT + "\n\n" + (PLATFORM_PROMPTS[platform] ?? ""),
           provider,
           model,
           language
@@ -87,26 +93,37 @@ export default function Humanizer() {
         display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <span style={{ fontSize: 15, fontWeight: 600, letterSpacing: "-0.3px", color: "#1a1a1a" }}>Text Humanizer</span>
-        <Select value={language} onValueChange={setLanguage}>
-          <SelectTrigger className="h-8 rounded-full border-transparent bg-muted px-3 text-[13px] font-medium text-muted-foreground shadow-none hover:bg-muted/80 focus:ring-0 gap-1.5 [&>svg]:size-3.5 [&>svg]:opacity-50">
-            <span className="text-sm leading-none">🌐</span>
-            <SelectValue placeholder="Language" />
-          </SelectTrigger>
-          <SelectContent align="end">
-            <SelectItem value="English">English</SelectItem>
-            <SelectItem value="Spanish">Spanish</SelectItem>
-            <SelectItem value="French">French</SelectItem>
-            <SelectItem value="German">German</SelectItem>
-            <SelectItem value="Italian">Italian</SelectItem>
-            <SelectItem value="Portuguese">Portuguese</SelectItem>
-            <SelectItem value="Russian">Russian</SelectItem>
-            <SelectItem value="Chinese">Chinese</SelectItem>
-            <SelectItem value="Japanese">Japanese</SelectItem>
-            <SelectItem value="Korean">Korean</SelectItem>
-            <SelectItem value="Arabic">Arabic</SelectItem>
-            <SelectItem value="Hindi">Hindi</SelectItem>
-          </SelectContent>
-        </Select>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Select value={platform} onValueChange={setPlatform}>
+            <SelectTrigger className="h-8 rounded-full border-transparent bg-muted px-3 text-[13px] font-medium text-muted-foreground shadow-none hover:bg-muted/80 focus:ring-0 gap-1.5 [&>svg]:size-3.5 [&>svg]:opacity-50">
+              <span className="text-sm leading-none">📱</span>
+              <SelectValue placeholder="Platform" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="threads">Threads</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={language} onValueChange={setLanguage}>
+            <SelectTrigger className="h-8 rounded-full border-transparent bg-muted px-3 text-[13px] font-medium text-muted-foreground shadow-none hover:bg-muted/80 focus:ring-0 gap-1.5 [&>svg]:size-3.5 [&>svg]:opacity-50">
+              <span className="text-sm leading-none">🌐</span>
+              <SelectValue placeholder="Language" />
+            </SelectTrigger>
+            <SelectContent align="end">
+              <SelectItem value="English">English</SelectItem>
+              <SelectItem value="Spanish">Spanish</SelectItem>
+              <SelectItem value="French">French</SelectItem>
+              <SelectItem value="German">German</SelectItem>
+              <SelectItem value="Italian">Italian</SelectItem>
+              <SelectItem value="Portuguese">Portuguese</SelectItem>
+              <SelectItem value="Russian">Russian</SelectItem>
+              <SelectItem value="Chinese">Chinese</SelectItem>
+              <SelectItem value="Japanese">Japanese</SelectItem>
+              <SelectItem value="Korean">Korean</SelectItem>
+              <SelectItem value="Arabic">Arabic</SelectItem>
+              <SelectItem value="Hindi">Hindi</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </nav>
 
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
