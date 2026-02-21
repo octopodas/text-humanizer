@@ -158,16 +158,33 @@ export default function Humanizer() {
             </SelectTrigger>
             <SelectContent position="popper" className="w-[--radix-select-trigger-width]">
               <SelectGroup>
-                <SelectLabel>Anthropic</SelectLabel>
+                <SelectLabel>Anthropic — Claude 4</SelectLabel>
+                <SelectItem value="anthropic:claude-opus-4-6">Claude Opus 4.6</SelectItem>
+                <SelectItem value="anthropic:claude-sonnet-4-6">Claude Sonnet 4.6</SelectItem>
+                <SelectItem value="anthropic:claude-haiku-4-5-20251001">Claude Haiku 4.5</SelectItem>
+              </SelectGroup>
+              <SelectSeparator />
+              <SelectGroup>
+                <SelectLabel>Anthropic — Claude 3</SelectLabel>
                 <SelectItem value="anthropic:claude-3-7-sonnet-20250219">Claude 3.7 Sonnet</SelectItem>
                 <SelectItem value="anthropic:claude-3-5-sonnet-20241022">Claude 3.5 Sonnet</SelectItem>
                 <SelectItem value="anthropic:claude-3-5-haiku-20241022">Claude 3.5 Haiku</SelectItem>
               </SelectGroup>
               <SelectSeparator />
               <SelectGroup>
-                <SelectLabel>Google</SelectLabel>
-                <SelectItem value="gemini:gemini-2.5-flash">Gemini 2.5 Flash</SelectItem>
+                <SelectLabel>Google — Gemini 3</SelectLabel>
+                <SelectItem value="gemini:gemini-3.1-pro-preview">Gemini 3.1 Pro (Preview)</SelectItem>
+              </SelectGroup>
+              <SelectSeparator />
+              <SelectGroup>
+                <SelectLabel>Google — Gemini 2.5</SelectLabel>
                 <SelectItem value="gemini:gemini-2.5-pro">Gemini 2.5 Pro</SelectItem>
+                <SelectItem value="gemini:gemini-2.5-flash">Gemini 2.5 Flash</SelectItem>
+              </SelectGroup>
+              <SelectSeparator />
+              <SelectGroup>
+                <SelectLabel>Google — Gemini 2.0</SelectLabel>
+                <SelectItem value="gemini:gemini-2.0-flash">Gemini 2.0 Flash</SelectItem>
                 <SelectItem value="gemini:gemini-2.0-flash-exp">Gemini 2.0 Flash (Exp)</SelectItem>
               </SelectGroup>
             </SelectContent>
