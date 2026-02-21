@@ -28,6 +28,8 @@ export default function Humanizer() {
   const [error, setError] = useState("");
   const [showChanges, setShowChanges] = useState(false);
   const [copiedSet, setCopiedSet] = useState(new Set());
+  const [viewMode, setViewMode] = useState<"chunks" | "block">("chunks");
+  const [blockCopied, setBlockCopied] = useState(false);
 
   async function humanize() {
     if (!input.trim()) return;
@@ -81,6 +83,19 @@ export default function Humanizer() {
     document.execCommand("copy");
     document.body.removeChild(el);
     setCopiedSet(prev => new Set(prev).add(idx));
+  }
+
+  function copyBlock(text) {
+    const el = document.createElement("textarea");
+    el.value = text;
+    el.style.cssText = "position:fixed;opacity:0;top:0;left:0";
+    document.body.appendChild(el);
+    el.focus();
+    el.select();
+    document.execCommand("copy");
+    document.body.removeChild(el);
+    setBlockCopied(true);
+    setTimeout(() => setBlockCopied(false), 1500);
   }
 
   return (
@@ -229,55 +244,126 @@ export default function Humanizer() {
         {/* Chunks */}
         {chunks.length > 0 && (
           <div>
-            <label style={{ fontSize: 12, fontWeight: 500, color: "#888", textTransform: "uppercase", letterSpacing: "0.6px", display: "block", marginBottom: 12 }}>
-              {chunks.length} Chunks
-            </label>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {chunks.map((chunk, i) => (
-                <div
-                  key={i}
-                  style={{
-                    border: "1px solid #e0e0e0",
-                    borderRadius: 10,
-                    overflow: "hidden",
-                    transition: "background 0.3s",
-                    background: copiedSet.has(i) ? "#e6f4ea" : "#fff",
-                  }}
-                >
-                  {/* Chunk header */}
-                  <div style={{
-                    display: "flex", justifyContent: "space-between", alignItems: "center",
-                    padding: "8px 14px",
-                    borderBottom: "1px solid #f0f0f0",
-                    background: copiedSet.has(i) ? "#d4edda" : "#fafafa",
-                  }}>
-                    <span style={{ fontSize: 12, color: "#999", fontWeight: 500 }}>
-                      #{i + 1} · {chunk.length} chars
-                    </span>
-                    <button
-                      onClick={() => copyChunk(i, chunk)}
-                      style={{
-                        padding: "4px 12px",
-                        background: copiedSet.has(i) ? "#2d7a3a" : "#1a1a1a",
-                        color: "#fff", border: "none", borderRadius: 6,
-                        fontSize: 12, fontWeight: 500, cursor: "pointer",
-                        transition: "background 0.2s",
-                      }}
-                    >
-                      {copiedSet.has(i) ? "Copied!" : "Copy"}
-                    </button>
-                  </div>
-                  {/* Chunk body */}
-                  <div style={{
-                    padding: "14px 16px",
-                    fontSize: 14, lineHeight: 1.65,
-                    whiteSpace: "pre-wrap", wordBreak: "break-word",
-                  }}>
-                    {chunk}
-                  </div>
-                </div>
-              ))}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <label style={{ fontSize: 12, fontWeight: 500, color: "#888", textTransform: "uppercase", letterSpacing: "0.6px" }}>
+                {chunks.length} Chunks
+              </label>
+              <button
+                onClick={() => setViewMode(v => v === "chunks" ? "block" : "chunks")}
+                title={viewMode === "chunks" ? "Show as 1 text block" : "Show chunked"}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  width: 24, height: 24, padding: 0,
+                  background: "transparent", border: "1px solid #ddd",
+                  borderRadius: 5, cursor: "pointer", color: "#888",
+                  transition: "border-color 0.15s, color 0.15s",
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#aaa"; (e.currentTarget as HTMLButtonElement).style.color = "#333"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#ddd"; (e.currentTarget as HTMLButtonElement).style.color = "#888"; }}
+              >
+                {viewMode === "chunks" ? (
+                  /* Collapse to block icon */
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+                    <rect x="2" y="2" width="12" height="12" rx="1.5" />
+                  </svg>
+                ) : (
+                  /* Expand to chunks icon */
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+                    <rect x="2" y="2" width="12" height="4" rx="1" />
+                    <rect x="2" y="10" width="12" height="4" rx="1" />
+                  </svg>
+                )}
+              </button>
             </div>
+
+            {viewMode === "chunks" ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {chunks.map((chunk, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      border: "1px solid #e0e0e0",
+                      borderRadius: 10,
+                      overflow: "hidden",
+                      transition: "background 0.3s",
+                      background: copiedSet.has(i) ? "#e6f4ea" : "#fff",
+                    }}
+                  >
+                    <div style={{
+                      display: "flex", justifyContent: "space-between", alignItems: "center",
+                      padding: "8px 14px",
+                      borderBottom: "1px solid #f0f0f0",
+                      background: copiedSet.has(i) ? "#d4edda" : "#fafafa",
+                    }}>
+                      <span style={{ fontSize: 12, color: "#999", fontWeight: 500 }}>
+                        #{i + 1} · {chunk.length} chars
+                      </span>
+                      <button
+                        onClick={() => copyChunk(i, chunk)}
+                        style={{
+                          padding: "4px 12px",
+                          background: copiedSet.has(i) ? "#2d7a3a" : "#1a1a1a",
+                          color: "#fff", border: "none", borderRadius: 6,
+                          fontSize: 12, fontWeight: 500, cursor: "pointer",
+                          transition: "background 0.2s",
+                        }}
+                      >
+                        {copiedSet.has(i) ? "Copied!" : "Copy"}
+                      </button>
+                    </div>
+                    <div style={{
+                      padding: "14px 16px",
+                      fontSize: 14, lineHeight: 1.65,
+                      whiteSpace: "pre-wrap", wordBreak: "break-word",
+                    }}>
+                      {chunk}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{
+                border: "1px solid #e0e0e0",
+                borderRadius: 10,
+                overflow: "hidden",
+                transition: "background 0.3s",
+                background: blockCopied ? "#e6f4ea" : "#fff",
+              }}>
+                <div style={{
+                  display: "flex", justifyContent: "space-between", alignItems: "center",
+                  padding: "8px 14px",
+                  borderBottom: "1px solid #f0f0f0",
+                  background: blockCopied ? "#d4edda" : "#fafafa",
+                }}>
+                  <span style={{ fontSize: 12, color: "#999", fontWeight: 500 }}>
+                    {chunks.join("\n\n").length} chars
+                  </span>
+                  <button
+                    onClick={() => copyBlock(chunks.join("\n\n"))}
+                    style={{
+                      padding: "4px 12px",
+                      background: blockCopied ? "#2d7a3a" : "#1a1a1a",
+                      color: "#fff", border: "none", borderRadius: 6,
+                      fontSize: 12, fontWeight: 500, cursor: "pointer",
+                      transition: "background 0.2s",
+                    }}
+                  >
+                    {blockCopied ? "Copied!" : "Copy"}
+                  </button>
+                </div>
+                <textarea
+                  readOnly
+                  value={chunks.join("\n\n")}
+                  style={{
+                    display: "block", width: "100%", padding: "14px 16px",
+                    boxSizing: "border-box", border: "none", outline: "none",
+                    fontSize: 14, lineHeight: 1.65, resize: "vertical",
+                    background: "transparent", fontFamily: "inherit",
+                    color: "#1a1a1a", minHeight: 200,
+                  }}
+                />
+              </div>
+            )}
           </div>
         )}
 
