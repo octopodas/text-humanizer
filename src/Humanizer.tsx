@@ -1,6 +1,7 @@
 import { useState } from "react";
 import STYLE_PROMPT from "./system-prompt.md?raw";
 import THREADS_PROMPT from "./prompts/threads.md?raw";
+import CHUNK_PROMPT from "./system-prompt-chunk.md?raw";
 import {
   Select,
   SelectContent,
@@ -30,10 +31,12 @@ export default function Humanizer() {
   const [copiedSet, setCopiedSet] = useState(new Set());
   const [viewMode, setViewMode] = useState<"chunks" | "block">("chunks");
   const [blockCopied, setBlockCopied] = useState(false);
+  const [loadingMode, setLoadingMode] = useState<"humanize" | "chunk">("humanize");
 
-  async function humanize() {
+  async function humanize(mode: "humanize" | "chunk" = "humanize") {
     if (!input.trim()) return;
     setLoading(true);
+    setLoadingMode(mode);
     setError("");
     setChunks([]);
     setChanges([]);
@@ -47,7 +50,7 @@ export default function Humanizer() {
         },
         body: JSON.stringify({
           input,
-          systemPrompt: STYLE_PROMPT + "\n\n" + (PLATFORM_PROMPTS[platform] ?? ""),
+          systemPrompt: (mode === "chunk" ? CHUNK_PROMPT : STYLE_PROMPT) + "\n\n" + (PLATFORM_PROMPTS[platform] ?? ""),
           provider,
           model,
           language
@@ -211,7 +214,7 @@ export default function Humanizer() {
         {/* Actions */}
         <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 28 }}>
           <button
-            onClick={humanize}
+            onClick={() => humanize("humanize")}
             disabled={loading || !input.trim()}
             style={{
               padding: "10px 22px",
@@ -222,6 +225,23 @@ export default function Humanizer() {
             }}
           >
             {loading ? "Processing…" : "Humanize"}
+          </button>
+
+          <button
+            onClick={() => humanize("chunk")}
+            disabled={loading || !input.trim()}
+            style={{
+              padding: "10px 22px",
+              background: loading || !input.trim() ? "#ccc" : "#fff",
+              color: loading || !input.trim() ? "#fff" : "#1a1a1a",
+              border: loading || !input.trim() ? "1px solid transparent" : "1px solid #ddd",
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: loading || !input.trim() ? "default" : "pointer",
+            }}
+          >
+            {loading && loadingMode === "chunk" ? "Chunking…" : "Just Chunk"}
           </button>
 
           {changes.length > 0 && (
@@ -254,7 +274,7 @@ export default function Humanizer() {
         {loading && (
           <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#888", marginBottom: 24 }}>
             <span style={{ display: "inline-block", width: 14, height: 14, border: "2px solid #ccc", borderTopColor: "#555", borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
-            Humanizing and chunking…
+            {loadingMode === "chunk" ? "Chunking…" : "Humanizing and chunking…"}
           </div>
         )}
 
